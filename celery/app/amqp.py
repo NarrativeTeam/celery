@@ -227,6 +227,7 @@ class TaskProducer(Producer):
             expires = now + timedelta(seconds=expires)
         eta = eta and eta.isoformat()
         expires = expires and expires.isoformat()
+        message_id = self._get_message_id(task_id)
 
         body = {
             'task': task_name,
@@ -252,6 +253,7 @@ class TaskProducer(Producer):
             compression=compression or self.compression,
             retry=retry, retry_policy=_rp,
             delivery_mode=delivery_mode, declare=declare,
+            message_id=message_id,
             **kwargs
         )
 
@@ -285,6 +287,13 @@ class TaskProducer(Producer):
         # We call Dispatcher.publish with a custom producer
         # so don't need the dispatcher to be "enabled".
         return self.app.events.Dispatcher(enabled=False)
+
+    def _get_message_id(self, task_id):
+        if self.app.conf.CELERY_SET_AMQP_MESSAGE_ID_TO_TASK_ID:
+            message_id = task_id
+        else:
+            message_id = None
+        return message_id
 
 
 class TaskPublisher(TaskProducer):

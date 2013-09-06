@@ -142,6 +142,7 @@ NAMESPACES = {
         'SEND_EVENTS': Option(False, type='bool'),
         'SEND_TASK_ERROR_EMAILS': Option(False, type='bool'),
         'SEND_TASK_SENT_EVENT': Option(False, type='bool'),
+        'SET_AMQP_MESSAGE_ID_TO_TASK_ID': Option(False, type='bool'),
         'STORE_ERRORS_EVEN_IF_IGNORED': Option(False, type='bool'),
         'TASK_PUBLISH_RETRY': Option(True, type='bool'),
         'TASK_PUBLISH_RETRY_POLICY': Option({

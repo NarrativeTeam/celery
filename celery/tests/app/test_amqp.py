@@ -53,6 +53,20 @@ class test_TaskProducer(AppCase):
         self.assertTrue(prod.event_dispatcher)
         self.assertFalse(prod.event_dispatcher.enabled)
 
+    def test_set_message_id_to_task_id(self):
+        self.app.conf.CELERY_SET_AMQP_MESSAGE_ID_TO_TASK_ID = True
+        prod = self.app.amqp.TaskProducer(Mock())
+        prod.publish = Mock()
+        prod.publish_task('tasks.add', (8, 8), {}, task_id="foobar")
+        self.assertEqual(prod.publish.call_args[1]['message_id'], 'foobar')
+
+    def test_not_set_message_id_to_task_id(self):
+        self.app.conf.CELERY_SET_AMQP_MESSAGE_ID_TO_TASK_ID = False
+        prod = self.app.amqp.TaskProducer(Mock())
+        prod.publish = Mock()
+        prod.publish_task('tasks.add', (8, 8), {}, task_id="foobar")
+        self.assertIsNone(prod.publish.call_args[1]['message_id'])
+
 
 class test_TaskConsumer(AppCase):
 
